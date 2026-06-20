@@ -1,8 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import {
+  Request,
+  Response,
+  NextFunction,
+} from "express";
+import { AppError } from "../utils/AppError";
 
 /**
- * Global error handler
- * Handles all application errors in one place.
+ * Global Error Middleware
  */
 export const errorHandler = (
   error: Error,
@@ -10,10 +14,18 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error("ERROR:", error);
 
-  res.status(500).json({
+  console.error(error);
+
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  return res.status(500).json({
     success: false,
-    message: error.message || "Internal Server Error",
+    message: "Internal Server Error",
   });
 };
