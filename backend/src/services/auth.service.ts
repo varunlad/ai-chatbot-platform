@@ -24,7 +24,7 @@ export const signupUser = async (
 
   if (existingUser) {
     throw new AppError(
-      "User already exists",
+      "User already exists same email",
       409
     );
   }
