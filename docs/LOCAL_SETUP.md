@@ -60,7 +60,7 @@ git --version
 # Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/varunlad/ai-chatbot-platform.git
 cd ai-chatbot-platform
 ```
 
