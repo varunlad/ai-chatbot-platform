@@ -14,6 +14,10 @@ import { comparePassword } from "../utils/password";
 import { generateToken } from "../utils/jwt";
 import { LoginInput } from "../types/auth.types";
 
+
+/**
+ * Signup user
+ */
 export const signupUser = async (
   data: SignupInput
 ) => {
@@ -94,4 +98,34 @@ export const loginUser = async (
     user: userWithoutPassword,
     token,
   };
+};
+
+/**
+ * Get current user by ID
+ */
+export const getCurrentUser = async (
+  userId: string
+) => {
+
+  const user =
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
+  if (!user) {
+    throw new AppError(
+      "User not found",
+      404
+    );
+  }
+
+  return user;
 };
