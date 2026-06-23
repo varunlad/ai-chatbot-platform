@@ -10,6 +10,9 @@ import { prisma } from "../config/prisma";
 import { AppError } from "../utils/AppError";
 import { hashPassword } from "../utils/password";
 import { SignupInput } from "../types/auth.types";
+import { comparePassword } from "../utils/password";
+import { generateToken } from "../utils/jwt";
+import { LoginInput } from "../types/auth.types";
 
 export const signupUser = async (
   data: SignupInput
@@ -42,4 +45,53 @@ export const signupUser = async (
     });
 
   return user;
+};
+
+/**
+ * Login user
+ */
+export const loginUser = async (
+  data: LoginInput
+) => {
+
+  const user =
+    await prisma.user.findUnique({
+      where: {
+        email: data.email,
+      },
+    });
+
+  if (!user) {
+    throw new AppError(
+      "Invalid email or password",
+      401
+    );
+  }
+
+  const isPasswordValid =
+    await comparePassword(
+      data.password,
+      user.password
+    );
+
+  if (!isPasswordValid) {
+    throw new AppError(
+      "Invalid email or password",
+      401
+    );
+  }
+
+  const token =
+    generateToken({
+      userId: user.id,
+      email: user.email,
+    });
+
+  const { password, ...userWithoutPassword } =
+    user;
+
+  return {
+    user: userWithoutPassword,
+    token,
+  };
 };
