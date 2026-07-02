@@ -248,6 +248,21 @@ Request:
 }
 ```
 
+Response:
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "cmqmqinxw0001u53835u46iz3",
+      "name": "Varun",
+      "email": "varun@test.com",
+      "createdAt": "2026-06-20T19:12:27.573Z",
+      "updatedAt": "2026-06-20T19:12:27.573Z"
+    }
+  }
+}
+
 Process:
 
 1. Validate input
