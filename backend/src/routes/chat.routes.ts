@@ -4,15 +4,20 @@
 
 import { Router } from "express";
 
-import { chatController } from "../controllers/chat.controller";
-
 import { authenticate } from "../middleware/auth.middleware";
+import { sendMessageController } from "../controllers/chat.controller";
 
 const router = Router();
 
 /**
  * Protected Chat Route
+ *
+ * POST /api/chat
  */
-router.post("/", authenticate, chatController);
+router.post(
+  "/",
+  authenticate,
+  sendMessageController,
+);
 
 export default router;

@@ -1,52 +1,57 @@
 /**
  * Chat Controller
+ *
+ * Handles chat-related requests.
  */
 
-import {
-  Request,
-  Response,
-} from "express";
+import { Request, Response } from "express";
 
-import { asyncHandler }
-from "../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 
-import { chatSchema }
-from "../validations/chat.validation";
+import { sendMessageSchema } from "../validations/chat.validation";
 
-import { sendMessage }
-from "../services/chat.service";
+import { sendMessage } from "../services/chat.service";
 
-export const chatController =
+/**
+ * Send a message
+ * to the chatbot.
+ */
+export const sendMessageController =
   asyncHandler(
     async (
       req: Request,
-      res: Response
+      res: Response,
     ) => {
+      /**
+       * Validate request body.
+       */
+      const {
+        conversationId,
+        message,
+      } = sendMessageSchema.parse(
+        req.body,
+      );
 
       /**
-       * Validate Request
+       * Logged-in user
+       * comes from JWT middleware.
        */
-      const validatedData =
-        chatSchema.parse(
-          req.body
-        );
+      const userId =
+        req.user!.userId;
 
       /**
-       * Get AI Response
+       * Send message.
        */
-      const aiResponse =
+      const response =
         await sendMessage(
-          validatedData.message
+          userId,
+          conversationId,
+          message,
         );
 
       res.status(200).json({
         success: true,
-        data: {
-          message:
-            validatedData.message,
-          response:
-            aiResponse,
-        },
+        data: response,
       });
-    }
+    },
   );

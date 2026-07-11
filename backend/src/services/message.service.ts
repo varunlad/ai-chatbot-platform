@@ -5,6 +5,7 @@
  * related to chat messages.
  */
 
+import { MessageRole } from "@prisma/client";
 import { prisma } from "../config/prisma";
 
 /**
@@ -16,8 +17,8 @@ import { prisma } from "../config/prisma";
  */
 export const createMessage = async (
   conversationId: string,
-  role: string,
-  content: string
+  role: MessageRole,
+  content: string,
 ) => {
   return prisma.message.create({
     data: {
@@ -36,7 +37,7 @@ export const createMessage = async (
  * oldest to newest.
  */
 export const getConversationMessages = async (
-  conversationId: string
+  conversationId: string,
 ) => {
   return prisma.message.findMany({
     where: {

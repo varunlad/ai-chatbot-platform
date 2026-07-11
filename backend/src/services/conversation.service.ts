@@ -41,25 +41,22 @@ export const getUserConversations = async (
 };
 
 /**
- * Get one conversation
- * including all messages.
+ * Get a conversation by its ID
+ * and verify that it belongs
+ * to the authenticated user.
+ *
+ * Returns null if:
+ * - Conversation does not exist
+ * - Conversation belongs to another user
  */
 export const getConversationById = async (
   conversationId: string,
-  userId: string
+  userId: string,
 ) => {
   return prisma.conversation.findFirst({
     where: {
       id: conversationId,
       userId,
-    },
-
-    include: {
-      messages: {
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
     },
   });
 };

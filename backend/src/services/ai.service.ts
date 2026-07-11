@@ -4,8 +4,10 @@
  * Handles communication
  * with OpenRouter.
  */
+
 import "dotenv/config";
 import OpenAI from "openai";
+import { AIMessage } from "../utils/chatMessageMapper";
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -13,28 +15,23 @@ const openai = new OpenAI({
 });
 
 /**
- * Send prompt to AI model
+ * Send conversation history
+ * to the AI model.
  */
-export const generateAIResponse =
-  async (
-    message: string
-  ) => {
-    const completion =
-      await openai.chat.completions.create({
-        model:
-          process.env.AI_MODEL ||
-          "nvidia/nemotron-3-super-120b-a12b:free",
+export const generateAIResponse = async (
+  messages: AIMessage[],
+): Promise<string> => {
+  const completion =
+    await openai.chat.completions.create({
+      model:
+        process.env.AI_MODEL ??
+        "nvidia/nemotron-3-super-120b-a12b:free",
 
-        messages: [
-          {
-            role: "user",
-            content: message,
-          },
-        ],
-      });
+      messages,
+    });
 
-    return (
-      completion.choices[0].message.content ??
-      "No response generated."
-    );
-  };
+  return (
+    completion.choices[0].message.content ??
+    "No response generated."
+  );
+};
