@@ -64,3 +64,112 @@ export const getConversationById = async (
     },
   });
 };
+
+/**
+ * Rename a conversation.
+ */
+export const renameConversation = async (
+  conversationId: string,
+  userId: string,
+  title: string,
+) => {
+  const conversation =
+    await getConversationById(
+      conversationId,
+      userId,
+    );
+
+  if (!conversation) {
+    return null;
+  }
+
+  return prisma.conversation.update({
+    where: {
+      id: conversationId,
+    },
+    data: {
+      title,
+    },
+  });
+};
+
+/**
+ * Delete a conversation.
+ */
+export const deleteConversation = async (
+  conversationId: string,
+  userId: string,
+) => {
+  const conversation =
+    await getConversationById(
+      conversationId,
+      userId,
+    );
+
+  if (!conversation) {
+    return null;
+  }
+
+  await prisma.conversation.delete({
+    where: {
+      id: conversationId,
+    },
+  });
+
+  return true;
+};
+
+/**
+ * Pin / Unpin a conversation.
+ */
+export const pinConversation = async (
+  conversationId: string,
+  userId: string,
+  isPinned: boolean,
+) => {
+  const conversation =
+    await getConversationById(
+      conversationId,
+      userId,
+    );
+
+  if (!conversation) {
+    return null;
+  }
+
+  return prisma.conversation.update({
+    where: {
+      id: conversationId,
+    },
+    data: {
+      isPinned,
+
+      pinnedAt: isPinned
+        ? new Date()
+        : null,
+    },
+  });
+};
+
+/**
+ * Update conversation title.
+ *
+ * Used when generating
+ * an automatic title
+ * after the user's first message.
+ */
+export const updateConversationTitle =
+  async (
+    conversationId: string,
+    title: string,
+  ) => {
+    return prisma.conversation.update({
+      where: {
+        id: conversationId,
+      },
+
+      data: {
+        title,
+      },
+    });
+  };

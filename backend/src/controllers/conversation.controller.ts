@@ -9,12 +9,17 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import {
   createConversationSchema,
+  renameConversationSchema,
+  pinConversationSchema
 } from "../validations/conversation.validation";
 
 import {
   createConversation,
   getConversationById,
   getUserConversations,
+  renameConversation ,
+  pinConversation,
+  deleteConversation 
 } from "../services/conversation.service";
 
 import { AppError } from "../utils/AppError";
@@ -102,3 +107,103 @@ export const getConversationController =
       data: conversation,
     });
   });
+
+  /**
+ * Rename Conversation
+ */
+export const renameConversationController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response,
+    ) => {
+      const { title } =
+        renameConversationSchema.parse(
+          req.body,
+        );
+
+      const conversation =
+        await renameConversation(
+          req.params.id,
+          req.user!.userId,
+          title,
+        );
+
+      if (!conversation) {
+        throw new AppError(
+          "Conversation not found.",
+          404,
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        data: conversation,
+      });
+    },
+  );
+
+  /**
+ * Delete Conversation
+ */
+export const deleteConversationController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response,
+    ) => {
+      const deleted =
+        await deleteConversation(
+          req.params.id,
+          req.user!.userId,
+        );
+
+      if (!deleted) {
+        throw new AppError(
+          "Conversation not found.",
+          404,
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Conversation deleted successfully.",
+      });
+    },
+  );
+
+  /**
+ * Pin / Unpin Conversation
+ */
+export const pinConversationController =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response,
+    ) => {
+      const { isPinned } =
+        pinConversationSchema.parse(
+          req.body,
+        );
+
+      const conversation =
+        await pinConversation(
+          req.params.id,
+          req.user!.userId,
+          isPinned,
+        );
+
+      if (!conversation) {
+        throw new AppError(
+          "Conversation not found.",
+          404,
+        );
+      }
+
+      res.status(200).json({
+        success: true,
+        data: conversation,
+      });
+    },
+  );

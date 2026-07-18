@@ -11,6 +11,9 @@ import {
   createConversationController,
   getConversationController,
   getUserConversationsController,
+  renameConversationController,
+  pinConversationController,
+  deleteConversationController,
 } from "../controllers/conversation.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
@@ -28,10 +31,7 @@ router.use(authenticate);
  *
  * Create a new conversation.
  */
-router.post(
-  "/",
-  createConversationController
-);
+router.post("/", createConversationController);
 
 /**
  * GET /api/conversations
@@ -39,10 +39,7 @@ router.post(
  * Get all conversations
  * of logged-in user.
  */
-router.get(
-  "/",
-  getUserConversationsController
-);
+router.get("/", getUserConversationsController);
 
 /**
  * GET /api/conversations/:id
@@ -50,9 +47,15 @@ router.get(
  * Get one conversation
  * with all messages.
  */
-router.get(
-  "/:id",
-  getConversationController
-);
+router.get("/:id", getConversationController);
+
+router.patch("/:id", authenticate, renameConversationController);
+
+router.delete("/:id", authenticate, deleteConversationController);
+
+/**
+ * Pin / Unpin Conversation
+ */
+router.patch("/:id/pin", authenticate, pinConversationController);
 
 export default router;

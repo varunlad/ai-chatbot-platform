@@ -2,13 +2,26 @@
  * Chat Service
  *
  * This is the heart of the chatbot backend.
+ *
+ * Responsibilities:
+ * - Verify conversation ownership
+ * - Save user's message
+ * - Load conversation history
+ * - Convert messages into AI format
+ * - Call OpenRouter
+ * - Save AI response
+ * - Generate conversation title
+ * - Return AI response
  */
 
 import { MessageRole } from "@prisma/client";
 
 import { AppError } from "../utils/AppError";
 
-import { getConversationById } from "./conversation.service";
+import {
+  getConversationById,
+  updateConversationTitle,
+} from "./conversation.service";
 
 import {
   createMessage,
@@ -17,10 +30,16 @@ import {
 
 import { mapMessagesToAI } from "../utils/chatMessageMapper";
 
+import { generateConversationTitle } from "../utils/generateConversationTitle";
+
 import { generateAIResponse } from "./ai.service";
 
 /**
  * Send a message to the chatbot.
+ *
+ * @param userId Logged-in user's ID
+ * @param conversationId Conversation ID
+ * @param message User's message
  */
 export const sendMessage = async (
   userId: string,
@@ -28,7 +47,9 @@ export const sendMessage = async (
   message: string,
 ) => {
   /**
-   * Verify conversation ownership.
+   * STEP 1
+   * Verify conversation belongs
+   * to the authenticated user.
    */
   const conversation =
     await getConversationById(
@@ -44,6 +65,7 @@ export const sendMessage = async (
   }
 
   /**
+   * STEP 2
    * Save user's message.
    */
   await createMessage(
@@ -53,7 +75,8 @@ export const sendMessage = async (
   );
 
   /**
-   * Load conversation history.
+   * STEP 3
+   * Load complete conversation.
    */
   const conversationMessages =
     await getConversationMessages(
@@ -61,8 +84,10 @@ export const sendMessage = async (
     );
 
   /**
-   * Convert database messages
-   * into OpenRouter format.
+   * STEP 4
+   * Convert messages into
+   * AI format including
+   * the selected assistant prompt.
    */
   const aiMessages =
     mapMessagesToAI(
@@ -71,6 +96,7 @@ export const sendMessage = async (
     );
 
   /**
+   * STEP 5
    * Generate AI response.
    */
   const aiReply =
@@ -79,6 +105,7 @@ export const sendMessage = async (
     );
 
   /**
+   * STEP 6
    * Save AI response.
    */
   const aiMessage =
@@ -89,7 +116,28 @@ export const sendMessage = async (
     );
 
   /**
-   * Return response.
+   * STEP 7
+   * Generate conversation title.
+   *
+   * This only happens once,
+   * when the conversation
+   * still has the default title.
+   */
+  if (conversation.title === "New Chat") {
+    const title =
+      generateConversationTitle(
+        message,
+      );
+
+    await updateConversationTitle(
+      conversationId,
+      title,
+    );
+  }
+
+  /**
+   * STEP 8
+   * Return AI response.
    */
   return {
     conversationId,

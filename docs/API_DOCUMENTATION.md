@@ -289,6 +289,203 @@ When this endpoint is called, the backend performs the following steps:
 
 ---
 
+# 7. Get Current User
+
+Returns the currently authenticated user's details.
+
+## Endpoint
+
+```
+GET /auth/me
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cm123456789",
+    "name": "Varun",
+    "email": "varun@email.com",
+    "createdAt": "2026-07-19T12:00:00.000Z",
+    "updatedAt": "2026-07-19T12:00:00.000Z"
+  }
+}
+```
+
+---
+
+# 8. Logout
+
+Logs out the currently authenticated user.
+
+## Endpoint
+
+```
+POST /auth/logout
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Logged out successfully."
+}
+```
+
+---
+
+# 9. Rename Conversation
+
+Updates the title of an existing conversation.
+
+## Endpoint
+
+```
+PATCH /conversations/:conversationId/title
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Request Body
+
+```json
+{
+  "title": "React Interview Preparation"
+}
+```
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Conversation renamed successfully.",
+  "data": {
+    "id": "conversationId",
+    "title": "React Interview Preparation",
+    "assistantType": "CODING",
+    "updatedAt": "2026-07-19T14:20:00.000Z"
+  }
+}
+```
+
+---
+
+# 10. Delete Conversation
+
+Deletes a conversation and all of its messages.
+
+## Endpoint
+
+```
+DELETE /conversations/:conversationId
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Conversation deleted successfully."
+}
+```
+
+---
+
+# 11. Pin Conversation
+
+Pins a conversation to the top of the conversation list.
+
+## Endpoint
+
+```
+PATCH /conversations/:conversationId/pin
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Conversation pinned successfully.",
+  "data": {
+    "id": "conversationId",
+    "isPinned": true
+  }
+}
+```
+
+---
+
+# 12. Unpin Conversation
+
+Removes a conversation from the pinned list.
+
+## Endpoint
+
+```
+PATCH /conversations/:conversationId/unpin
+```
+
+## Authentication
+
+Required (HTTP-only Cookie)
+
+## Success Response (200)
+
+```json
+{
+  "success": true,
+  "message": "Conversation unpinned successfully.",
+  "data": {
+    "id": "conversationId",
+    "isPinned": false
+  }
+}
+```
+
+---
+
+# Updated Authentication Summary
+
+| Endpoint | Authentication |
+|----------|----------------|
+| POST /auth/signup | Not Required |
+| POST /auth/login | Not Required |
+| GET /auth/me | HTTP-only Cookie |
+| POST /auth/logout | HTTP-only Cookie |
+| POST /conversations | HTTP-only Cookie |
+| GET /conversations | HTTP-only Cookie |
+| GET /conversations/:conversationId | HTTP-only Cookie |
+| PATCH /conversations/:conversationId/title | HTTP-only Cookie |
+| DELETE /conversations/:conversationId | HTTP-only Cookie |
+| PATCH /conversations/:conversationId/pin | HTTP-only Cookie |
+| PATCH /conversations/:conversationId/unpin | HTTP-only Cookie |
+| POST /chat | HTTP-only Cookie |
+
+---
+
 # Conversation Flow
 
 ```
@@ -381,20 +578,3 @@ Response Returned
 * OpenRouter AI Integration
 * Persistent Message Storage
 
----
-
-# Upcoming Features
-
-The following APIs are planned for future releases:
-
-* Get Available Assistants
-* Rename Conversation
-* Delete Conversation
-* Pin / Unpin Conversation
-* Auto-generated Conversation Titles
-* Streaming AI Responses
-* Image Upload
-* File Upload
-* Retrieval-Augmented Generation (RAG)
-* Conversation Search
-* User Settings

@@ -1,233 +1,91 @@
-# AI Chatbot Platform - Local Setup Guide
+# Local Setup
 
-## Overview
+## Clone Repository
 
-This project is an AI Chatbot Platform built using:
-
-### Frontend
-
-* Next.js (App Router)
-* React
-* TypeScript
-* SCSS
-
-### Backend
-
-* Node.js
-* Express.js
-* TypeScript
-
-### Database
-
-* PostgreSQL (Neon)
-
-### ORM
-
-* Prisma
-
----
-
-# Project Structure
-
-```text
-ai-chatbot-platform/
-│
-├── frontend/
-├── backend/
-└── docs/
+```bash
+git clone <repository-url>
 ```
 
 ---
 
-# Prerequisites
-
-Install:
-
-* Node.js 20+
-* Git
-* VS Code
-
-Verify installation:
-
-```bash
-node -v
-npm -v
-git --version
-```
-
----
-
-# Clone Repository
-
-```bash
-git clone https://github.com/varunlad/ai-chatbot-platform.git
-cd ai-chatbot-platform
-```
-
----
-
-# Frontend Setup
-
-Navigate to frontend:
-
-```bash
-cd frontend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run application:
-
-```bash
-npm run dev
-```
-
-Frontend will run on:
-
-```text
-http://localhost:3000
-```
-
----
-
-# Backend Setup
-
-Navigate to backend:
+# Backend
 
 ```bash
 cd backend
 ```
 
-Install dependencies:
+Install dependencies
 
 ```bash
 npm install
 ```
 
-Create .env file:
+---
+
+Create
+
+```
+.env
+```
 
 ```env
 PORT=5000
 
-DATABASE_URL="YOUR_DATABASE_URL"
+DATABASE_URL=YOUR_DATABASE_URL
+
+JWT_SECRET=YOUR_SECRET
+
+JWT_EXPIRES_IN=7d
+
+OPENROUTER_API_KEY=YOUR_KEY
+
+AI_MODEL=nvidia/nemotron-3-super-120b-a12b:free
 ```
 
 ---
 
-# Prisma Setup
-
-Generate Prisma Client:
+Generate Prisma Client
 
 ```bash
 npx prisma generate
 ```
 
-Run database migrations:
+---
+
+Run Migrations
 
 ```bash
 npx prisma migrate dev
 ```
 
-Open Prisma Studio:
-
-```bash
-npx prisma studio
-```
-
-Prisma Studio:
-
-```text
-http://localhost:5555
-```
-
 ---
 
-# Run Backend
+Start Backend
 
 ```bash
 npm run dev
 ```
 
-Backend will run on:
+Backend
 
-```text
+```
 http://localhost:5000
 ```
 
 ---
 
-# Available Commands
-
-## Frontend
-
-Start development server:
+# Frontend
 
 ```bash
+cd frontend
+
+npm install
+
 npm run dev
 ```
 
-Build project:
+Frontend
 
-```bash
-npm run build
 ```
-
-Run production build:
-
-```bash
-npm start
+http://localhost:3000
 ```
-
----
-
-## Backend
-
-Start development server:
-
-```bash
-npm run dev
-```
-
-Build TypeScript:
-
-```bash
-npm run build
-```
-
-Run production build:
-
-```bash
-npm start
-```
-
----
-
-# Database Tables
-
-Current database structure:
-
-## User
-
-Stores application users.
-
-## Conversation
-
-Stores chat sessions.
-
-## Message
-
-Stores user and AI messages.
-
----
-
-# Notes
-
-* Never commit .env files.
-* Never commit node_modules.
-* Keep DATABASE_URL secret.
-* Run migrations whenever schema changes.
-* Commit migration files to Git.

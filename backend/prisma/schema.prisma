@@ -41,6 +41,10 @@ model Conversation {
 
   assistantType  AssistantType   @default(GENERAL)
 
+  isPinned       Boolean         @default(false)
+
+  pinnedAt       DateTime?
+
   userId         String
   user           User            @relation(fields: [userId], references: [id])
 
