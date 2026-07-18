@@ -6,8 +6,10 @@
  */
 
 import "dotenv/config";
+
 import OpenAI from "openai";
-import { AIMessage } from "../utils/chatMessageMapper";
+
+import { AIMessage } from "../types/ai.types";
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -15,8 +17,8 @@ const openai = new OpenAI({
 });
 
 /**
- * Send conversation history
- * to the AI model.
+ * Generate AI response
+ * using conversation history.
  */
 export const generateAIResponse = async (
   messages: AIMessage[],

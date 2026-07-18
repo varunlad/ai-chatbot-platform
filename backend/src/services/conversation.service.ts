@@ -5,30 +5,32 @@
  * related to conversations.
  */
 
+import { AssistantType } from "@prisma/client";
+
 import { prisma } from "../config/prisma";
 
 /**
  * Create a new conversation
- * for the logged-in user.
+ * for the authenticated user.
  */
 export const createConversation = async (
-  userId: string
+  userId: string,
+  assistantType: AssistantType,
 ) => {
   return prisma.conversation.create({
     data: {
       title: "New Chat",
       userId,
+      assistantType,
     },
   });
 };
 
 /**
- * Get all conversations
+ * Get every conversation
  * belonging to a user.
  */
-export const getUserConversations = async (
-  userId: string
-) => {
+export const getUserConversations = async (userId: string) => {
   return prisma.conversation.findMany({
     where: {
       userId,
@@ -41,13 +43,7 @@ export const getUserConversations = async (
 };
 
 /**
- * Get a conversation by its ID
- * and verify that it belongs
- * to the authenticated user.
- *
- * Returns null if:
- * - Conversation does not exist
- * - Conversation belongs to another user
+ * Get one conversation.
  */
 export const getConversationById = async (
   conversationId: string,
@@ -57,6 +53,14 @@ export const getConversationById = async (
     where: {
       id: conversationId,
       userId,
+    },
+
+    include: {
+      messages: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 };

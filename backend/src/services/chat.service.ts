@@ -2,15 +2,6 @@
  * Chat Service
  *
  * This is the heart of the chatbot backend.
- *
- * Responsibilities:
- * - Verify conversation ownership
- * - Save user's message
- * - Load conversation history
- * - Convert messages into AI format
- * - Call OpenRouter
- * - Save AI response
- * - Return AI response
  */
 
 import { MessageRole } from "@prisma/client";
@@ -30,15 +21,6 @@ import { generateAIResponse } from "./ai.service";
 
 /**
  * Send a message to the chatbot.
- *
- * @param userId - Logged-in user's ID
- * @param conversationId - Conversation to which the message belongs
- * @param message - User's input message
- *
- * @returns
- * Conversation ID,
- * AI Message ID,
- * AI Response
  */
 export const sendMessage = async (
   userId: string,
@@ -46,15 +28,13 @@ export const sendMessage = async (
   message: string,
 ) => {
   /**
-   * STEP 1
-   * Verify that the conversation
-   * exists and belongs to
-   * the authenticated user.
+   * Verify conversation ownership.
    */
-  const conversation = await getConversationById(
-    conversationId,
-    userId,
-  );
+  const conversation =
+    await getConversationById(
+      conversationId,
+      userId,
+    );
 
   if (!conversation) {
     throw new AppError(
@@ -64,9 +44,7 @@ export const sendMessage = async (
   }
 
   /**
-   * STEP 2
-   * Save the user's message
-   * into the database.
+   * Save user's message.
    */
   await createMessage(
     conversationId,
@@ -75,12 +53,7 @@ export const sendMessage = async (
   );
 
   /**
-   * STEP 3
-   * Fetch the complete
-   * conversation history.
-   *
-   * Messages are returned
-   * from oldest to newest.
+   * Load conversation history.
    */
   const conversationMessages =
     await getConversationMessages(
@@ -88,20 +61,17 @@ export const sendMessage = async (
     );
 
   /**
-   * STEP 4
    * Convert database messages
-   * into the format expected
-   * by OpenRouter.
+   * into OpenRouter format.
    */
   const aiMessages =
     mapMessagesToAI(
       conversationMessages,
+      conversation.assistantType,
     );
 
   /**
-   * STEP 5
-   * Send the conversation
-   * history to the AI model.
+   * Generate AI response.
    */
   const aiReply =
     await generateAIResponse(
@@ -109,9 +79,7 @@ export const sendMessage = async (
     );
 
   /**
-   * STEP 6
-   * Save the AI's response
-   * into the database.
+   * Save AI response.
    */
   const aiMessage =
     await createMessage(
@@ -121,9 +89,7 @@ export const sendMessage = async (
     );
 
   /**
-   * STEP 7
-   * Return the response
-   * to the controller.
+   * Return response.
    */
   return {
     conversationId,

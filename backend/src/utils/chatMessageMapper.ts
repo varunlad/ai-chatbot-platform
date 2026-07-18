@@ -2,35 +2,44 @@
  * Chat Message Mapper
  *
  * Converts database messages into
- * the format expected by OpenRouter/OpenAI.
+ * the format expected by OpenRouter.
  */
 
 import {
+  AssistantType,
   Message,
   MessageRole,
 } from "@prisma/client";
 
-/**
- * OpenRouter message format.
- */
-export interface AIMessage {
-  role: "user" | "assistant";
-  content: string;
-}
+import { AIMessage } from "../types/ai.types";
+import { getSystemPrompt } from "../prompts/promptFactory";
 
 /**
- * Convert database messages
- * into AI messages.
+ * Convert database messages into
+ * OpenRouter message format.
  */
 export const mapMessagesToAI = (
   messages: Message[],
+  assistantType: AssistantType,
 ): AIMessage[] => {
-  return messages.map((message) => ({
-    role:
-      message.role === MessageRole.USER
-        ? "user"
-        : "assistant",
+  const aiMessages: AIMessage[] = [];
 
-    content: message.content,
-  }));
+  // Add system prompt first
+  aiMessages.push({
+    role: "system",
+    content: getSystemPrompt(assistantType),
+  });
+
+  // Add conversation history
+  messages.forEach((message) => {
+    aiMessages.push({
+      role:
+        message.role === MessageRole.USER
+          ? "user"
+          : "assistant",
+      content: message.content,
+    });
+  });
+
+  return aiMessages;
 };

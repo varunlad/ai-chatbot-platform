@@ -3,11 +3,8 @@
  */
 
 import { z } from "zod";
+import { AssistantType } from "@prisma/client";
 
-export const createConversationSchema =
-  z.object({
-    title: z
-      .string()
-      .min(1)
-      .max(100),
-  });
+export const createConversationSchema = z.object({
+  assistantType: z.nativeEnum(AssistantType),
+});

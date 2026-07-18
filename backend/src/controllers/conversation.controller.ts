@@ -7,6 +7,9 @@
 
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
+import {
+  createConversationSchema,
+} from "../validations/conversation.validation";
 
 import {
   createConversation,
@@ -19,25 +22,46 @@ import { AppError } from "../utils/AppError";
 /**
  * Create a new conversation.
  */
+/**
+ * Create Conversation
+ */
 export const createConversationController =
-  asyncHandler(async (req: Request, res: Response) => {
-    /**
-     * req.user is attached by
-     * authenticate middleware.
-     */
-    const userId = req.user.userId;
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response,
+    ) => {
+      /**
+       * Validate request.
+       */
+      const {
+        assistantType,
+      } =
+        createConversationSchema.parse(
+          req.body,
+        );
 
-    /**
-     * Create conversation.
-     */
-    const conversation =
-      await createConversation(userId);
+      /**
+       * Logged in user.
+       */
+      const userId =
+        req.user!.userId;
 
-    res.status(201).json({
-      success: true,
-      data: conversation,
-    });
-  });
+      /**
+       * Create conversation.
+       */
+      const conversation =
+        await createConversation(
+          userId,
+          assistantType,
+        );
+
+      res.status(201).json({
+        success: true,
+        data: conversation,
+      });
+    },
+  );
 
 /**
  * Get all conversations
